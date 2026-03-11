@@ -49,20 +49,19 @@ void lihatTim(Tim daftarTim[], int jumlahTim) {
 }
 
 // kalo ini tambah tim wok
-void tambahTim(Tim daftarTim[], int &jumlahTim) {
+int tambahTim(Tim daftarTim[], int jumlahTim) {
     if (jumlahTim >= MAX) {
         cout << "Kapasitas tim penuh!" << endl;
-        return;
+        return jumlahTim;
     }
-
     cout << "Masukkan nama tim: ";
     cin.ignore();
     getline(cin, daftarTim[jumlahTim].namaTim);
-
     daftarTim[jumlahTim].jumlahPlayer = 0;
     jumlahTim++;
-
     cout << "Tim berhasil ditambahkan." << endl;
+
+    return jumlahTim;
 }
 
 // sama aja tapi ini buat tambah player ke tim yang udah ada wok
@@ -164,14 +163,12 @@ void hapusPlayer(Tim daftarTim[], int jumlahTim) {
 }
 
 // ini untuk delete tim yang ada wok
-void hapusTim(Tim daftarTim[], int &jumlahTim) {
+int hapusTim(Tim daftarTim[], int jumlahTim) {
     if (jumlahTim == 0) {
         cout << "Belum ada tim." << endl;
-        return;
+        return jumlahTim;
     }
-
     int hapus;
-
     for (int i = 0; i < jumlahTim; i++) {
         cout << i+1 << ". " << daftarTim[i].namaTim << endl;
     }
@@ -186,6 +183,7 @@ void hapusTim(Tim daftarTim[], int &jumlahTim) {
     jumlahTim--;
 
     cout << "Tim berhasil dihapus." << endl;
+    return jumlahTim;
 }
 
 int main() {
@@ -233,7 +231,7 @@ int main() {
                 break;
 
             case 2:
-                tambahTim(daftarTim, jumlahTim);
+                jumlahTim = tambahTim(daftarTim, jumlahTim);
                 break;
 
             case 3:
@@ -249,7 +247,7 @@ int main() {
                 break;
 
             case 6:
-                hapusTim(daftarTim, jumlahTim);
+                jumlahTim = hapusTim(daftarTim, jumlahTim);
                 break;
         }
     } while(menu != 7);
