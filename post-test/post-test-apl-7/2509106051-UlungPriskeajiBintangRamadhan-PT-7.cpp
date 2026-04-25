@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <stdexcept>
 using namespace std;
 
 #define MAX 10
@@ -29,7 +30,7 @@ bool login(string username, string password){
 void lihatTim(Tim *daftarTim, int *jumlahTim) {
     try {
         if (*jumlahTim == 0)
-            throw "Belum Ada Data Tim."; 
+            throw runtime_error("Belum Ada Data Tim."); 
 
         for (int i = 0; i < *jumlahTim; i++) {
             Tim *t = &(*(daftarTim + i));
@@ -45,8 +46,8 @@ void lihatTim(Tim *daftarTim, int *jumlahTim) {
                     << p->umur << " tahun" << endl;
             }
         }
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
     }
 }
 
@@ -54,7 +55,7 @@ void lihatTim(Tim *daftarTim, int *jumlahTim) {
 void tambahTim(Tim *daftarTim, int *jumlahTim) {
     try {
         if (*jumlahTim >= MAX)
-            throw "Kapasitas tim penuh!";
+            throw length_error("Kapasitas tim penuh!");
 
         cin.ignore();
         Tim *t = &(*(daftarTim + *jumlahTim));
@@ -63,14 +64,14 @@ void tambahTim(Tim *daftarTim, int *jumlahTim) {
         getline(cin, t->namaTim);
 
         if (t->namaTim.empty())
-            throw "Nama tim tidak boleh kosong!";
+            throw runtime_error("Nama tim tidak boleh kosong!");
 
         t->jumlahPlayer = 0;
         (*jumlahTim)++;
 
         cout << "Tim berhasil ditambahkan.\n";
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
     }
 }
 
@@ -78,7 +79,7 @@ void tambahTim(Tim *daftarTim, int *jumlahTim) {
 void tambahPlayer(Tim *daftarTim, int *jumlahTim) {
     try {
         if (*jumlahTim == 0)
-            throw "Belum Ada Data Tim.";
+            throw runtime_error("Belum Ada Data Tim.");
 
         int pilihTim;
 
@@ -89,16 +90,16 @@ void tambahPlayer(Tim *daftarTim, int *jumlahTim) {
         cout << "Pilih Nomor Tim: ";
         cin >> pilihTim;
 
-        if (cin.fail()) throw "Input harus angka!";
+        if (cin.fail()) throw invalid_argument("Input harus angka!");
         pilihTim--;
 
         if (pilihTim < 0 || pilihTim >= *jumlahTim)
-            throw "Pilihan tim tidak valid!";
+            throw out_of_range("Pilihan tim tidak valid!");
 
         Tim *t = &(*(daftarTim + pilihTim));
 
         if (t->jumlahPlayer >= MAX)
-            throw "Player sudah penuh!";
+            throw length_error("Player sudah penuh!");
 
         Player *p = &(*(t->daftarPlayer + t->jumlahPlayer));
 
@@ -107,36 +108,36 @@ void tambahPlayer(Tim *daftarTim, int *jumlahTim) {
         getline(cin, p->nickname);
 
         if (p->nickname.empty())
-            throw "Nickname tidak boleh kosong!";
+            throw invalid_argument("Nickname tidak boleh kosong!");
 
         cout << "Role: "; 
         getline(cin, p->role);
 
         if (p->role.empty())
-            throw "Role tidak boleh kosong!";
+            throw invalid_argument("Role tidak boleh kosong!");
 
         cout << "Nationality: "; 
         cin >> p->nationality;
 
         if (p->nationality.empty())
-            throw "Nationality tidak boleh kosong!";
+            throw invalid_argument("Nationality tidak boleh kosong!");
 
         cout << "Status: "; 
         cin >> p->status;
 
         if (p->status.empty())
-            throw "Status tidak boleh kosong!";
+            throw invalid_argument("Status tidak boleh kosong!");
 
         cout << "Umur: "; 
         cin >> p->umur;
 
-        if (cin.fail()) throw "Umur harus angka!";
+        if (cin.fail()) throw invalid_argument("Umur harus angka!");
 
         t->jumlahPlayer++;
 
         cout << "Player berhasil ditambahkan.\n";
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
         cin.clear(); 
         cin.ignore(1000,'\n');
     }
@@ -146,7 +147,7 @@ void tambahPlayer(Tim *daftarTim, int *jumlahTim) {
 void updatePlayer(Tim *daftarTim, int *jumlahTim) {
     try {
         if (*jumlahTim == 0)
-            throw "Belum Ada Data Tim.";
+            throw runtime_error("Belum Ada Data Tim.");
 
         int pilihTim, pilihPlayer;
 
@@ -156,16 +157,16 @@ void updatePlayer(Tim *daftarTim, int *jumlahTim) {
         cout << "Pilih Tim: ";
         cin >> pilihTim;
 
-        if (cin.fail()) throw "Input harus angka!";
+        if (cin.fail()) throw invalid_argument("Input harus angka!");
         pilihTim--;
 
         if (pilihTim < 0 || pilihTim >= *jumlahTim)
-            throw "Tim tidak valid!";
+            throw out_of_range("Tim tidak valid!");
 
         Tim *t = &(*(daftarTim + pilihTim));
 
         if (t->jumlahPlayer == 0)
-            throw "Belum ada player!";
+            throw runtime_error("Belum ada player!");
 
         for (int j = 0; j < t->jumlahPlayer; j++)
             cout << j+1 << ". " << (t->daftarPlayer+j)->nickname << endl;
@@ -173,11 +174,11 @@ void updatePlayer(Tim *daftarTim, int *jumlahTim) {
         cout << "Pilih Player: ";
         cin >> pilihPlayer;
 
-        if (cin.fail()) throw "Input harus angka!";
+        if (cin.fail()) throw invalid_argument("Input harus angka!");
         pilihPlayer--;
 
         if (pilihPlayer < 0 || pilihPlayer >= t->jumlahPlayer)
-            throw "Player tidak valid!";
+            throw out_of_range("Player tidak valid!");
 
         Player *p = &(*(t->daftarPlayer + pilihPlayer));
 
@@ -186,31 +187,31 @@ void updatePlayer(Tim *daftarTim, int *jumlahTim) {
         cout << "Nickname Baru: ";
         getline(cin, p->nickname);
         if (p->nickname.empty())
-            throw "Nickname tidak boleh kosong!";
+            throw invalid_argument("Nickname tidak boleh kosong!");
 
         cout << "Role Baru: ";
         getline(cin, p->role);
         if (p->role.empty())
-            throw "Role tidak boleh kosong!";
+            throw invalid_argument("Role tidak boleh kosong!");
 
         cout << "Nationality Baru: ";
         cin >> p->nationality;
         if (p->nationality.empty())
-            throw "Nationality tidak boleh kosong!";
+            throw invalid_argument("Nationality tidak boleh kosong!");
 
         cout << "Status Baru: ";
         cin >> p->status;
         if (p->status.empty())
-            throw "Status tidak boleh kosong!";
+            throw invalid_argument("Status tidak boleh kosong!");
 
         cout << "Umur Baru: ";
         cin >> p->umur;
 
-        if (cin.fail()) throw "Umur harus angka!";
+        if (cin.fail()) throw invalid_argument("Umur harus angka!");
 
         cout << "Data berhasil diupdate.\n";
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
         cin.clear();
         cin.ignore(1000,'\n');
     }
@@ -220,7 +221,7 @@ void updatePlayer(Tim *daftarTim, int *jumlahTim) {
 void hapusPlayer(Tim *daftarTim, int *jumlahTim) {
     try {
         if (*jumlahTim == 0)
-            throw "Belum Ada Data Tim.";
+            throw runtime_error("Belum Ada Data Tim.");
 
         int pilihTim, pilihPlayer;
 
@@ -231,12 +232,12 @@ void hapusPlayer(Tim *daftarTim, int *jumlahTim) {
         cin >> pilihTim; pilihTim--;
 
         if (pilihTim < 0 || pilihTim >= *jumlahTim)
-            throw "Tim tidak valid!";
+            throw out_of_range("Tim tidak valid!");
 
         Tim *t = &(*(daftarTim + pilihTim));
 
         if (t->jumlahPlayer == 0)
-            throw "Tidak ada player!";
+            throw runtime_error("Tidak ada player!");
 
         for (int j = 0; j < t->jumlahPlayer; j++)
             cout << j+1 << ". " << (t->daftarPlayer+j)->nickname << endl;
@@ -245,7 +246,7 @@ void hapusPlayer(Tim *daftarTim, int *jumlahTim) {
         cin >> pilihPlayer; pilihPlayer--;
 
         if (pilihPlayer < 0 || pilihPlayer >= t->jumlahPlayer)
-            throw "Player tidak valid!";
+            throw out_of_range("Player tidak valid!");
 
         for (int j = pilihPlayer; j < t->jumlahPlayer - 1; j++)
             *(t->daftarPlayer + j) = *(t->daftarPlayer + j + 1);
@@ -253,8 +254,8 @@ void hapusPlayer(Tim *daftarTim, int *jumlahTim) {
         t->jumlahPlayer--;
 
         cout << "Player berhasil dihapus.\n";
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
     }
 }
 
@@ -262,7 +263,7 @@ void hapusPlayer(Tim *daftarTim, int *jumlahTim) {
 void hapusTim(Tim *daftarTim, int *jumlahTim) {
     try {
         if (*jumlahTim == 0)
-            throw "Belum Ada Data Tim.";
+            throw runtime_error("Belum Ada Data Tim.");
 
         int hapus;
 
@@ -273,7 +274,7 @@ void hapusTim(Tim *daftarTim, int *jumlahTim) {
         cin >> hapus; hapus--;
 
         if (hapus < 0 || hapus >= *jumlahTim)
-            throw "Tim tidak valid!";
+            throw out_of_range("Tim tidak valid!");
 
         for (int i = hapus; i < *jumlahTim - 1; i++)
             *(daftarTim+i) = *(daftarTim+i+1);
@@ -281,8 +282,8 @@ void hapusTim(Tim *daftarTim, int *jumlahTim) {
         (*jumlahTim)--;
 
         cout << "Tim berhasil dihapus.\n";
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
     }
 }
 
@@ -291,7 +292,7 @@ void hapusTim(Tim *daftarTim, int *jumlahTim) {
 // Bubble Sort Nama Tim
 void sortNamaTimAsc(Tim *daftarTim, int jumlahTim) {
     try {
-        if (jumlahTim == 0) throw "Belum ada tim!";
+        if (jumlahTim == 0) throw runtime_error("Belum ada tim!");
 
         for (int i = 0; i < jumlahTim-1; i++)
             for (int j = 0; j < jumlahTim-i-1; j++)
@@ -300,8 +301,8 @@ void sortNamaTimAsc(Tim *daftarTim, int jumlahTim) {
 
         cout << "\n=== HASIL SORT NAMA TIM ===\n";
         lihatTim(daftarTim, &jumlahTim);
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
     }
 }
 
@@ -309,7 +310,7 @@ void sortNamaTimAsc(Tim *daftarTim, int jumlahTim) {
 // Insertion Sort Player
 void sortPlayerAsc(Tim *daftarTim, int jumlahTim) {
     try {
-        if (jumlahTim == 0) throw "Belum ada tim!";
+        if (jumlahTim == 0) throw runtime_error("Belum ada tim!");
 
         int pilih;
         cout << "Pilih Tim:\n";
@@ -317,14 +318,14 @@ void sortPlayerAsc(Tim *daftarTim, int jumlahTim) {
             cout << i+1 << ". " << (daftarTim+i)->namaTim << endl;
 
         cin >> pilih;
-        if (cin.fail()) throw "Input harus angka!";
+        if (cin.fail()) throw runtime_error("Input harus angka!");
         pilih--;
 
-        if (pilih < 0 || pilih >= jumlahTim) throw "Tim tidak valid!";
+        if (pilih < 0 || pilih >= jumlahTim) throw out_of_range("Tim tidak valid!");
 
         Tim *t = &(*(daftarTim + pilih));
 
-        if (t->jumlahPlayer == 0) throw "Tidak ada player!";
+        if (t->jumlahPlayer == 0) throw runtime_error("Tidak ada player!");
 
         for (int i = 1; i < t->jumlahPlayer; i++) {
             Player key = *(t->daftarPlayer+i);
@@ -339,15 +340,15 @@ void sortPlayerAsc(Tim *daftarTim, int jumlahTim) {
 
         cout << "\n=== HASIL SORT PLAYER ===\n";
         lihatTim(daftarTim, &jumlahTim);
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
     }
 }
 
 // Selection Sort Umur
 void sortUmurDesc(Tim *daftarTim, int jumlahTim) {
     try {
-        if (jumlahTim == 0) throw "Belum ada tim!";
+        if (jumlahTim == 0) throw runtime_error("Belum ada tim!");
 
         int pilih;
         cout << "Pilih Tim:\n";
@@ -355,14 +356,14 @@ void sortUmurDesc(Tim *daftarTim, int jumlahTim) {
             cout << i+1 << ". " << (daftarTim+i)->namaTim << endl;
 
         cin >> pilih;
-        if (cin.fail()) throw "Input harus angka!";
+        if (cin.fail()) throw runtime_error("Input harus angka!");
         pilih--;
 
-        if (pilih < 0 || pilih >= jumlahTim) throw "Tim tidak valid!";
+        if (pilih < 0 || pilih >= jumlahTim) throw out_of_range("Tim tidak valid!");
 
         Tim *t = &(*(daftarTim + pilih));
 
-        if (t->jumlahPlayer == 0) throw "Tidak ada player!";
+        if (t->jumlahPlayer == 0) throw runtime_error("Tidak ada player!");
 
         for (int i = 0; i < t->jumlahPlayer-1; i++) {
             int maxIndex = i;
@@ -375,8 +376,8 @@ void sortUmurDesc(Tim *daftarTim, int jumlahTim) {
 
         cout << "\n=== HASIL SORT UMUR ===\n";
         lihatTim(daftarTim, &jumlahTim);
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
     }
 }
 
@@ -385,7 +386,7 @@ void sortUmurDesc(Tim *daftarTim, int jumlahTim) {
 // linear search nama player
 void cariNamaPlayer(Tim *daftarTim, int jumlahTim) {
     try {
-        if (jumlahTim == 0) throw "Belum ada tim!";
+        if (jumlahTim == 0) throw runtime_error("Belum ada tim!");
 
         string cari;
         cin.ignore();
@@ -404,9 +405,9 @@ void cariNamaPlayer(Tim *daftarTim, int jumlahTim) {
             }
         }
 
-        if (!ditemukan) throw "Player tidak ditemukan!";
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+        if (!ditemukan) throw runtime_error("Player tidak ditemukan!");
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
     }
 }
 
@@ -415,7 +416,7 @@ void cariUmurPlayer(Tim *daftarTim, int jumlahTim) {
     try { 
 
         if (jumlahTim == 0) {
-            throw "Belum Ada Data Tim."; 
+            throw runtime_error("Belum Ada Data Tim."); 
         }
 
         int pilih, cari;
@@ -428,17 +429,17 @@ void cariUmurPlayer(Tim *daftarTim, int jumlahTim) {
         cout << "Pilih: ";
         cin >> pilih;
 
-        if (cin.fail()) throw "Input harus angka!"; 
+        if (cin.fail()) throw runtime_error("Input harus angka!"); 
 
         pilih--;
 
         if (pilih < 0 || pilih >= jumlahTim)
-            throw "Pilihan tim tidak valid!"; 
+            throw runtime_error("Pilihan tim tidak valid!"); 
 
         Tim *t = &(*(daftarTim + pilih));
 
         if (t->jumlahPlayer == 0)
-            throw "Tidak ada player dalam tim ini!"; 
+            throw runtime_error("Tidak ada player dalam tim ini!"); 
 
         // sorting umur player terlebih dahulu menggunakan bubble sort(ascending)
         for (int i = 0; i < t->jumlahPlayer - 1; i++) {
@@ -452,7 +453,7 @@ void cariUmurPlayer(Tim *daftarTim, int jumlahTim) {
         cout << "Masukkan Umur Yang Ingin Dicari: ";
         cin >> cari;
 
-        if (cin.fail()) throw "Umur harus berupa angka!"; 
+        if (cin.fail()) throw runtime_error("Umur harus berupa angka!"); 
 
         int low = 0, high = t->jumlahPlayer - 1;
         bool ditemukan = false;
@@ -494,11 +495,11 @@ void cariUmurPlayer(Tim *daftarTim, int jumlahTim) {
         }
 
         if (!ditemukan) {
-            throw "Data Tidak Ditemukan.";
+            throw runtime_error("Data Tidak Ditemukan.");
         }
 
-    } catch (const char* e) { 
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) { 
+        cout << "Error: " << e.what() << endl;
         cin.clear();              // reset status error
         cin.ignore(1000, '\n');   // buang sisa input
     }
@@ -518,12 +519,12 @@ int main() {
             } else {
                 kesempatan--;
                 if (kesempatan == 0)
-                    throw "Kesempatan login habis!";
+                    throw runtime_error("Kesempatan login habis!");
                 cout << "Login gagal. Sisa: " << kesempatan << endl;
             }
         }
-    } catch (const char* e) {
-        cout << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
         return 0;
     }
 
@@ -531,21 +532,21 @@ int main() {
     int jumlahTim = 0;
     int menu;
 
-// // ALTER EGO
-// daftarTim[jumlahTim].namaTim = "Alter Ego";
-// daftarTim[jumlahTim].jumlahPlayer = 9;
+// ALTER EGO
+daftarTim[jumlahTim].namaTim = "Alter Ego";
+daftarTim[jumlahTim].jumlahPlayer = 9;
 
-// daftarTim[jumlahTim].daftarPlayer[0] = {"Nino","Explaner","Indonesia","Main",20};
-// daftarTim[jumlahTim].daftarPlayer[1] = {"Reyy","Jungler","Indonesia","Main",20};
-// daftarTim[jumlahTim].daftarPlayer[2] = {"Hijumee","Midlaner","Indonesia","Main",23};
-// daftarTim[jumlahTim].daftarPlayer[3] = {"Arfy","Goldlaner","Indonesia","Main",21};
-// daftarTim[jumlahTim].daftarPlayer[4] = {"alekk","Roamer","Indonesia","Main",21};
-// daftarTim[jumlahTim].daftarPlayer[5] = {"Yazukee","Jungler","Indonesia","Sub",22};
-// daftarTim[jumlahTim].daftarPlayer[6] = {"Cyruz","Midlaner","Indonesia","Sub",20};
-// daftarTim[jumlahTim].daftarPlayer[7] = {"Xepher","Head Coach","Indonesia","Staff",29};
-// daftarTim[jumlahTim].daftarPlayer[8] = {"Styx","Assistant Coach","Indonesia","Staff",23};
+daftarTim[jumlahTim].daftarPlayer[0] = {"Nino","Explaner","Indonesia","Main",20};
+daftarTim[jumlahTim].daftarPlayer[1] = {"Reyy","Jungler","Indonesia","Main",20};
+daftarTim[jumlahTim].daftarPlayer[2] = {"Hijumee","Midlaner","Indonesia","Main",23};
+daftarTim[jumlahTim].daftarPlayer[3] = {"Arfy","Goldlaner","Indonesia","Main",21};
+daftarTim[jumlahTim].daftarPlayer[4] = {"alekk","Roamer","Indonesia","Main",21};
+daftarTim[jumlahTim].daftarPlayer[5] = {"Yazukee","Jungler","Indonesia","Sub",22};
+daftarTim[jumlahTim].daftarPlayer[6] = {"Cyruz","Midlaner","Indonesia","Sub",20};
+daftarTim[jumlahTim].daftarPlayer[7] = {"Xepher","Head Coach","Indonesia","Staff",29};
+daftarTim[jumlahTim].daftarPlayer[8] = {"Styx","Assistant Coach","Indonesia","Staff",23};
 
-// jumlahTim++;
+jumlahTim++;
 
 // ONIC
 daftarTim[jumlahTim].namaTim = "ONIC";
@@ -597,8 +598,11 @@ jumlahTim++;
         cout << "Pilih: ";
         cin >> menu;
 
-        try {
-            if (cin.fail()) throw "Menu harus angka!";
+try {
+    if (cin.fail())
+        throw invalid_argument("Menu harus angka!"); 
+    if (menu < 1 || menu > 12)
+        throw out_of_range("Menu tidak tersedia!");
 
         switch(menu) {
             case 1: lihatTim(daftarTim, &jumlahTim);
@@ -624,8 +628,8 @@ jumlahTim++;
             case 11: cariUmurPlayer(daftarTim, jumlahTim); 
             break;
         }
-    } catch (const char* e) {
-        cout << "Error: " << e << endl;
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
         cin.clear(); cin.ignore(1000,'\n');
     }
 
